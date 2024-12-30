@@ -18,7 +18,6 @@ def load_yaml(conf_name):
     with open(path, "r") as file:
         data = yaml.safe_load(file)
     return data
-d
 
 def load_data(path):
     """
