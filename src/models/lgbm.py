@@ -16,7 +16,7 @@ class LightGBMModel:
         Parameters:
             params (dict, optional): Custom LightGBM parameters. If None, default parameters are loaded from a YAML file.
         """
-        self.conf = load_yaml()['model']['LGBM']
+        self.conf = load_yaml('lgbm')['model']['LGBM']
         self.params = {
             'objective': self.conf['objective'],
             'metric': self.conf['metric'],
