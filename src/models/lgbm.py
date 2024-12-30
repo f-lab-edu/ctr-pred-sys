@@ -5,7 +5,17 @@ from src.utils.load import load_yaml
 
 
 class LightGBMModel:
+    """
+    A wrapper class of LightGBM model for Click-Through Rate (CTR) prediction.
+    """
+
     def __init__(self, params=None):
+        """
+        Initialize the LightGBMModel.
+
+        Parameters:
+            params (dict, optional): Custom LightGBM parameters. If None, default parameters are loaded from a YAML file.
+        """
         self.conf = load_yaml()['model']['LGBM']
         self.params = {
             'objective': self.conf['objective'],
@@ -31,7 +41,16 @@ class LightGBMModel:
         y_test,
         categorical_features
     ):
+        """
+        Train the LightGBM model on the provided training and testing datasets.
 
+        Parameters:
+            X_train (pd.DataFrame): The training feature set.
+            X_test (pd.DataFrame): The testing feature set.
+            y_train (pd.Series): The training target labels.
+            y_test (pd.Series): The testing target labels.
+            categorical_features (list): List of categorical feature names.
+        """
         train_data = lgb.Dataset(X_train, label=y_train, categorical_feature=categorical_features)
         test_data = lgb.Dataset(X_test, label=y_test, categorical_feature=categorical_features, reference=train_data)
 
@@ -46,18 +65,55 @@ class LightGBMModel:
         )
 
     def predict(self, X):
+        """
+        Predict target values for the given input features.
+
+        Parameters:
+            X (pd.DataFrame): The input feature set.
+
+        Returns:
+            np.ndarray: Predicted values.
+
+        Raises:
+            ValueError: If the model has not been trained yet.
+        """
         if not self.model:
             raise ValueError("Model has not been trained yet. Call `fit` first.")
         return self.model.predict(X)
 
     def evaluate(self, X, y):
+        """
+        Evaluate the model using the ROC-AUC score.
+
+        Parameters:
+            X (pd.DataFrame): The input feature set.
+            y (pd.Series): The true target labels.
+
+        Returns:
+            float: The ROC-AUC score of the model.
+        """
         y_pred = self.predict(X)
         return roc_auc_score(y, y_pred)
 
     def save_model(self, path):
+        """
+        Save the trained LightGBM model to a file.
+
+        Parameters:
+            path (str): Path where the model should be saved.
+
+        Raises:
+            ValueError: If the model has not been trained yet.
+        """
         if not self.model:
             raise ValueError("Model has not been trained yet. Call `fit` first.")
         self.model.save_model(path)
 
     def load_model(self, path):
+        """
+        Load a LightGBM model from a file.
+
+        Parameters:
+            path (str): Path to the saved model file.
+        """
         self.model = lgb.Booster(model_file=path)

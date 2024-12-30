@@ -2,10 +2,31 @@ import torch.nn as nn
 
 
 class DenseLayer(nn.Module):
+    """
+    A fully connected (dense) layer.
+    """
+
     def __init__(self, in_dim, out_dim, dropout=0.2):
+        """
+        Initialize the DenseLayer.
+
+        Parameters:
+            in_dim (int): The number of input features.
+            out_dim (int): The number of output features.
+            dropout (float, optional): The dropout rate for regularization. Default is 0.2.
+        """
         super(DenseLayer, self).__init__()
         layers = [nn.Linear(in_dim, out_dim), nn.ReLU(), nn.Dropout(dropout)]
         self.fc = nn.Sequential(*layers)
 
     def forward(self, x):
+        """
+        Perform the forward pass.
+
+        Parameters:
+            x (torch.Tensor): The input tensor.
+
+        Returns:
+            torch.Tensor: The output tensor after applying the dense layer.
+        """
         return self.fc(x)

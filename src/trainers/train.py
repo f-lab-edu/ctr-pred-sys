@@ -4,6 +4,15 @@ import torch.optim as optim
 
 
 def train_dl_model(model, train_loader, test_loader, epochs):
+    """
+    Train a deep learning model.
+
+    Parameters:
+        model (torch.nn.Module): The deep learning model to train.
+        train_loader (torch.utils.data.DataLoader): Dataloader for the training data.
+        test_loader (torch.utils.data.DataLoader): Dataloader for the testing/validation data.
+        epochs (int): The number of training epochs.
+    """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -47,6 +56,16 @@ def train_dl_model(model, train_loader, test_loader, epochs):
 
 
 def train_lgbm_model(model, X_train, y_train, X_val, y_val):
+    """
+    Train a LightGBM model and evaluate it on the validation data.
+
+    Parameters:
+        model (lightgbm.Booster): The LightGBM model to train.
+        X_train (pd.DataFrame): Training feature data.
+        y_train (pd.Series): Training target labels.
+        X_val (pd.DataFrame): Validation feature data.
+        y_val (pd.Series): Validation target labels.
+    """
     model.fit(X_train, y_train, X_val, y_val)
     auc_score = model.evaluate(X_val, y_val)
     print(f"LightGBM Validation AUC: {auc_score:.4f}")

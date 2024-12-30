@@ -14,22 +14,9 @@ model:
     seed: 42
     num_boost_round: 1000
     early_stopping_rounds: 50
-  DeepFM:
-    embedding_dim: 8
-    deep_dims: [128, 64]
-    dropout: 0.3
-  DCNv2:
-    embedding_dim: 8
-    deep_dims: [128, 64]
-    cross_layers: 3
-    dropout: 0.3
 
 training:
   batch_size: 256
   epochs: 10
   learning_rate: 0.001
   random_seed: 42
-
-data:
-  dataset_path: "./data/day_0_sample_10000"
-  test_split: 0.2

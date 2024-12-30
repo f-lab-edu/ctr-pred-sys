@@ -3,6 +3,20 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
 
 def preprocess_data(data):
+    """
+    Preprocess the dataset by handling missing values, scaling numeric features,
+    and encoding categorical features.
+
+    Parameters:
+        data (pd.DataFrame): The input raw dataset.
+
+    Returns:
+        tuple:
+            - X (pd.DataFrame): The preprocessed features.
+            - y (pd.Series): The target labels.
+            - num_cols (list): List of numeric column names.
+            - cat_cols (list): List of categorical column names.
+    """
     data.columns = (
         ["Label"] + [f"I{i}" for i in range(1, 14)] + [f"C{i}" for i in range(1, 27)]
     )
@@ -26,6 +40,32 @@ def preprocess_data(data):
 
 
 def split_data(X, y, num_cols, cat_cols, split_num_cat=True):
+    """
+    Split the dataset into training and testing sets.
+
+    Parameters:
+        X (pd.DataFrame): The preprocessed feature set.
+        y (pd.Series): The target labels.
+        num_cols (list): List of numeric column names.
+        cat_cols (list): List of categorical column names.
+        split_num_cat (bool, optional): Whether to split numeric and categorical features separately.
+                                         Default is True.
+
+    Returns:
+        tuple: Training and testing sets.
+            If split_num_cat is True:
+                - X_train_num (pd.DataFrame): Training numeric features.
+                - X_test_num (pd.DataFrame): Testing numeric features.
+                - X_train_cat (pd.DataFrame): Training categorical features.
+                - X_test_cat (pd.DataFrame): Testing categorical features.
+                - y_train (pd.Series): Training labels.
+                - y_test (pd.Series): Testing labels.
+            If split_num_cat is False:
+                - X_train (pd.DataFrame): Training features.
+                - X_test (pd.DataFrame): Testing features.
+                - y_train (pd.Series): Training labels.
+                - y_test (pd.Series): Testing labels.
+    """
     if split_num_cat:
         X_train_num, X_test_num, X_train_cat, X_test_cat, y_train, y_test = (
             train_test_split(
