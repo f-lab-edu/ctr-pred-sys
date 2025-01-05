@@ -1,23 +1,24 @@
+from __future__ import annotations
+
 import bentoml
 import torch
 
-from __future__ import annotations
-from bentoml.io import NumpyNdarray
 from torch.utils.data import DataLoader
 
-from src.utils.load import load_data, load_yaml
-from src.preprocessing.preprocess import preprocess_data, split_data
-from src.trainers.train import train_dl_model, train_lgbm_model
-from src.trainers.eval import evaluate_dl_model, evaluate_lgbm_model
-from src.datasets.criteo import CriteoDataset
-from src.models.deepfm import DeepFM
-from src.models.dcn_v2 import DCNv2
-from src.models.lgbm import LightGBMModel
+with bentoml.importing():
+    from src.utils.load import load_data, load_yaml
+    from src.preprocessing.preprocess import preprocess_data, split_data
+    from src.trainers.train import train_dl_model
+    from src.trainers.eval import evaluate_dl_model, evaluate_lgbm_model
+    from src.datasets.criteo import CriteoDataset
+    from src.models.deepfm import DeepFM
+    from src.models.dcn_v2 import DCNv2
+    from src.models.lgbm import LightGBMModel
 
 # Define a BentoML service with specified resource limits and traffic settings
 @bentoml.service(
-    resources={"cpu": "4", "nvidia.com/gpu": "1"},
-    traffic={"timeout": 600},
+    resources={"cpu": "4"},
+    traffic={"timeout": 30},
 )
 class ModelService:
     """
@@ -35,11 +36,9 @@ class ModelService:
         """
         Initialize the BentoML service.
         """
-        self.model_type = "dcn_v2"
-        self.conf = load_yaml(self.model_type)
         self.data_path = load_yaml("data")["data"]["dataset_path"]
 
-    @bentoml.api(input=bentoml.io.Text(), output=bentoml.io.Text(), route="/run_model")
+q    @bentoml.api(route="/run_model")
     def run_model(self, model_type: str) -> str:
         """
         Run the specified machine learning model.
@@ -50,6 +49,10 @@ class ModelService:
         Returns:
             str: The evaluation results of the model.
         """
+        self.model_type = model_type
+        self.conf = load_yaml(self.model_type)
+
+        print(f'[Model Type] {self.model_type}')
         print('[STEP 0] start')
 
         print('[STEP 1] load data')
@@ -58,7 +61,7 @@ class ModelService:
         print('[STEP 2] preprocess data')
         X, y, num_cols, cat_cols = preprocess_data(data)
 
-        if model_type == 'lgbm':
+        if self.model_type == 'lgbm':
             """
             Run the LightGBM model.
             """
@@ -67,7 +70,9 @@ class ModelService:
             model = LightGBMModel()
             model.fit(X_train, X_test, y_train, y_test, cat_cols)
             evaluation = evaluate_lgbm_model(model, X_test, y_test)
-            return f"LightGBM evaluation: {evaluation}"
+            bento_model = bentoml.lightgbm.save_model(self.model_type, model.lgbm_model)
+
+            return f"Model tag : {bento_model.tag} / LightGBM evaluation: {evaluation}"
 
         elif model_type == 'deepfm':
             """
@@ -96,7 +101,9 @@ class ModelService:
             train_dl_model(model, train_loader, test_loader, epochs, lr)
 
             evaluation = evaluate_dl_model(model, test_loader)
-            return f"DeepFM evaluation: {evaluation}"
+            bento_model = bentoml.pytorch.save_model(self.model_type, model)
+
+            return f"Model tag : {bento_model.tag} / DeepFM evaluation: {evaluation}"
 
         elif model_type == 'dcn_v2':
             """
@@ -126,7 +133,9 @@ class ModelService:
             train_dl_model(model, train_loader, test_loader, epochs, lr)
 
             evaluation = evaluate_dl_model(model, test_loader)
-            return f"DCNv2 evaluation: {evaluation}"
+            bento_model = bentoml.pytorch.save_model(self.model_type, model)
+
+            return f"Model tag : {bento_model.tag} / DCNv2 evaluation: {evaluation}"
 
         else:
             return "Invalid model type. Please choose from ['lgbm', 'deepfm', 'dcn_v2']"
