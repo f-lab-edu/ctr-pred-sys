@@ -1,3 +1,4 @@
+import bentoml
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -69,3 +70,34 @@ def train_lgbm_model(model, X_train, y_train, X_val, y_val):
     model.fit(X_train, y_train, X_val, y_val)
     auc_score = model.evaluate(X_val, y_val)
     print(f"LightGBM Validation AUC: {auc_score:.4f}")
+
+
+def save_model_with_bentoml(model, model_name, metadata = {}, signatures = None):
+    """
+    Save a model using BentoML.
+
+    Parameters:
+        model (object): The trained ML model object.
+        model_name (str): The name to assign to the model in BentoML.
+        metadata (dict, optional): Additional metadata to save with the model.
+        signatures (dict, optional): Specify model input-output signatures for serving.
+            Example: {"predict": {"batchable": True}}
+
+    Returns:
+        bentoml.Model: The saved BentoML model reference.
+    """
+    if not signatures:
+        signatures = {"predict": {"batchable": True}}
+    
+    try:
+        saved_model = bentoml.save_model(
+            name=model_name,
+            model=model,
+            metadata=metadata,
+            signatures=signatures 
+        )
+        print(f"Model '{model_name}' has been successfully saved with BentoML.")
+        return saved_model
+    except Exception as e:
+        print(f"Failed to save the model '{model_name}'. Error: {e}")
+        raise

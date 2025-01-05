@@ -9,3 +9,7 @@ training:
   epochs: 10
   learning_rate: 0.001
   random_seed: 42
+
+servig:
+  model_name: deepfm
+  port: 3001

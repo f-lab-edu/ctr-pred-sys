@@ -20,3 +20,7 @@ training:
   epochs: 10
   learning_rate: 0.001
   random_seed: 42
+
+servig:
+  model_name: lgbm
+  port: 3002
