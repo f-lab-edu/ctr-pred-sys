@@ -2,9 +2,20 @@ import bentoml
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import pandas as pd
+
+from src.models.lgbm import LightGBMModel
+from torch.utils.data import DataLoader
+from typing import Dict, Optional, Any
 
 
-def train_dl_model(model, train_loader, test_loader, epochs):
+def train_dl_model(
+    model: nn.Module, 
+    train_loader: DataLoader, 
+    test_loader: DataLoader, 
+    epochs: int, 
+    lr: float
+) -> None:
     """
     Train a deep learning model.
 
@@ -13,10 +24,11 @@ def train_dl_model(model, train_loader, test_loader, epochs):
         train_loader (torch.utils.data.DataLoader): Dataloader for the training data.
         test_loader (torch.utils.data.DataLoader): Dataloader for the testing/validation data.
         epochs (int): The number of training epochs.
+        lr (float): Learning rate.
     """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     criterion = nn.BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     for epoch in range(epochs):
         model.train()
@@ -56,7 +68,13 @@ def train_dl_model(model, train_loader, test_loader, epochs):
         )
 
 
-def train_lgbm_model(model, X_train, y_train, X_val, y_val):
+def train_lgbm_model(
+    model: LightGBMModel, 
+    X_train: pd.DataFrame, 
+    y_train: pd.Series, 
+    X_val: pd.DataFrame, 
+    y_val: pd.Series
+) -> None:
     """
     Train a LightGBM model and evaluate it on the validation data.
 
@@ -72,7 +90,12 @@ def train_lgbm_model(model, X_train, y_train, X_val, y_val):
     print(f"LightGBM Validation AUC: {auc_score:.4f}")
 
 
-def save_model_with_bentoml(model, model_name, metadata = {}, signatures = None):
+def save_model_with_bentoml(
+    model: Any, 
+    model_name: str, 
+    metadata: Optional[Dict[str, Any]] = None, 
+    signatures: Optional[Dict[str, Dict[str, bool]]] = None
+) -> bentoml.Model:
     """
     Save a model using BentoML.
 

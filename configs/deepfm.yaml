@@ -1,8 +1,7 @@
 model:
-  DeepFM:
-    embedding_dim: 8
-    deep_dims: [128, 64]
-    dropout: 0.3
+  embedding_dim: 8
+  deep_dims: [128, 64]
+  dropout: 0.3
 
 training:
   batch_size: 256

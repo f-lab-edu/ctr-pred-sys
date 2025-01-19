@@ -1,10 +1,12 @@
 import torch
 import numpy as np
+import pandas as pd
 
+from src.models.lgbm import LightGBMModel
 from sklearn.metrics import log_loss, accuracy_score
+from typing import Tuple, Union
 
-
-def compute_log_loss(y_true, y_pred):
+def compute_log_loss(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarray, pd.Series]) -> float:
     """
     Compute the Log Loss for the given true and predicted values.
 
@@ -18,7 +20,7 @@ def compute_log_loss(y_true, y_pred):
     return log_loss(y_true, y_pred)
 
 
-def compute_accuracy(y_true, y_pred):
+def compute_accuracy(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarray, pd.Series]) -> float:
     """
     Compute the accuracy for the given true and predicted values.
 
@@ -33,7 +35,7 @@ def compute_accuracy(y_true, y_pred):
     return accuracy_score(y_true, y_pred_binary)
 
 
-def evaluate_dl_model(model, dataloader):
+def evaluate_dl_model(model: torch.nn.Module, dataloader: torch.utils.data.DataLoader) -> Tuple[float, float]:
     """
     Evaluate a deep learning model on the given dataloader.
 
@@ -66,7 +68,7 @@ def evaluate_dl_model(model, dataloader):
     return log_loss, accuracy
 
 
-def evaluate_lgbm_model(model, data, labels):
+def evaluate_lgbm_model(model: LightGBMModel, data: pd.DataFrame, labels: pd.Series) -> Tuple[float, float]:
     """
     Evaluate a LightGBM model on the given dataset.
 

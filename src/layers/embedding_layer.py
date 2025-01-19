@@ -1,13 +1,16 @@
 import torch
 import torch.nn as nn
 
+from torch import Tensor
+from typing import List
+
 
 class EmbeddingLayer(nn.Module):
     """
     An embedding layer.
     """
 
-    def __init__(self, num_features, embedding_dim):
+    def __init__(self, num_features: List[int], embedding_dim: int) -> None:
         """
         Initialize the EmbeddingLayer.
 
@@ -21,7 +24,7 @@ class EmbeddingLayer(nn.Module):
             [nn.Embedding(input_dim, embedding_dim) for input_dim in num_features]
         )
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         """
         Perform the forward pass.
 
