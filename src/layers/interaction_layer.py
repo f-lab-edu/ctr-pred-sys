@@ -1,13 +1,15 @@
 import torch
 import torch.nn as nn
 
+from torch import Tensor
+
 
 class FMInteractionLayer(nn.Module):
     """
     Factorization Machine (FM) Interaction Layer for modeling feature interactions.
     """
 
-    def __init__(self, input_dim):
+    def __init__(self, input_dim: int) -> None:
         """
         Initialize the FMInteractionLayer.
 
@@ -18,7 +20,7 @@ class FMInteractionLayer(nn.Module):
 
         self.first_order = nn.Linear(input_dim, 1)
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tuple[Tensor, Tensor]:
         """
         Perform the forward pass.
 
@@ -39,7 +41,7 @@ class CrossInteractionLayer(nn.Module):
     Cross Interaction Layer for feature crossing.
     """
 
-    def __init__(self, input_dim, num_layers):
+    def __init__(self, input_dim: int, num_layers: int) -> None:
         """
         Initialize the CrossInteractionLayer.
 
@@ -59,7 +61,7 @@ class CrossInteractionLayer(nn.Module):
             [nn.Parameter(torch.zeros(1)) for _ in range(num_layers)]
         )
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         """
         Perform the forward pass.
 

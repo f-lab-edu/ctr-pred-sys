@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+
+from torch import Tensor
 
 
 class DenseLayer(nn.Module):
@@ -6,7 +9,7 @@ class DenseLayer(nn.Module):
     A fully connected (dense) layer.
     """
 
-    def __init__(self, in_dim, out_dim, dropout=0.2):
+    def __init__(self, in_dim: int, out_dim: int, dropout: float = 0.2) -> None:
         """
         Initialize the DenseLayer.
 
@@ -19,7 +22,7 @@ class DenseLayer(nn.Module):
         layers = [nn.Linear(in_dim, out_dim), nn.ReLU(), nn.Dropout(dropout)]
         self.fc = nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         """
         Perform the forward pass.
 

@@ -1,22 +1,25 @@
 model:
-  LGBM:
-    objective: "binary"
-    metric: "binary_logloss"
-    boosting_type: "gbdt"
-    learning_rate: 0.05
-    num_leaves: 31
-    max_depth: -1
-    min_data_in_leaf: 20
-    feature_fraction: 0.8
-    bagging_fraction: 0.8
-    bagging_freq: 5
-    verbose: -1
-    seed: 42
-    num_boost_round: 1000
-    early_stopping_rounds: 50
+  objective: "binary"
+  metric: "binary_logloss"
+  boosting_type: "gbdt"
+  learning_rate: 0.05
+  num_leaves: 31
+  max_depth: -1
+  min_data_in_leaf: 20
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 5
+  verbose: -1
+  seed: 42
+  num_boost_round: 1000
+  early_stopping_rounds: 50
 
 training:
   batch_size: 256
   epochs: 10
   learning_rate: 0.001
   random_seed: 42
+
+servig:
+  model_name: lgbm
+  port: 3002

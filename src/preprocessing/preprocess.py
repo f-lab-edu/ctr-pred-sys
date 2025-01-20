@@ -1,8 +1,10 @@
+import pandas as pd
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from typing import Tuple, List, Union
 
-
-def preprocess_data(data):
+def preprocess_data(data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series, List[str], List[str]]:
     """
     Preprocess the dataset by handling missing values, scaling numeric features,
     and encoding categorical features.
@@ -39,7 +41,16 @@ def preprocess_data(data):
     return X, y, num_cols, cat_cols
 
 
-def split_data(X, y, num_cols, cat_cols, split_num_cat=True):
+def split_data(
+    X: pd.DataFrame,
+    y: pd.Series,
+    num_cols: List[str],
+    cat_cols: List[str],
+    split_num_cat: bool = True,
+) -> Union[
+    Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series],
+    Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series],
+]:
     """
     Split the dataset into training and testing sets.
 

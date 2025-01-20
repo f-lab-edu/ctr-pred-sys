@@ -1,9 +1,21 @@
+import bentoml
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import pandas as pd
+
+from src.models.lgbm import LightGBMModel
+from torch.utils.data import DataLoader
+from typing import Dict, Optional, Any
 
 
-def train_dl_model(model, train_loader, test_loader, epochs):
+def train_dl_model(
+    model: nn.Module, 
+    train_loader: DataLoader, 
+    test_loader: DataLoader, 
+    epochs: int, 
+    lr: float
+) -> None:
     """
     Train a deep learning model.
 
@@ -12,10 +24,11 @@ def train_dl_model(model, train_loader, test_loader, epochs):
         train_loader (torch.utils.data.DataLoader): Dataloader for the training data.
         test_loader (torch.utils.data.DataLoader): Dataloader for the testing/validation data.
         epochs (int): The number of training epochs.
+        lr (float): Learning rate.
     """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     criterion = nn.BCELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     for epoch in range(epochs):
         model.train()
@@ -55,7 +68,13 @@ def train_dl_model(model, train_loader, test_loader, epochs):
         )
 
 
-def train_lgbm_model(model, X_train, y_train, X_val, y_val):
+def train_lgbm_model(
+    model: LightGBMModel, 
+    X_train: pd.DataFrame, 
+    y_train: pd.Series, 
+    X_val: pd.DataFrame, 
+    y_val: pd.Series
+) -> None:
     """
     Train a LightGBM model and evaluate it on the validation data.
 
@@ -69,3 +88,39 @@ def train_lgbm_model(model, X_train, y_train, X_val, y_val):
     model.fit(X_train, y_train, X_val, y_val)
     auc_score = model.evaluate(X_val, y_val)
     print(f"LightGBM Validation AUC: {auc_score:.4f}")
+
+
+def save_model_with_bentoml(
+    model: Any, 
+    model_name: str, 
+    metadata: Optional[Dict[str, Any]] = None, 
+    signatures: Optional[Dict[str, Dict[str, bool]]] = None
+) -> bentoml.Model:
+    """
+    Save a model using BentoML.
+
+    Parameters:
+        model (object): The trained ML model object.
+        model_name (str): The name to assign to the model in BentoML.
+        metadata (dict, optional): Additional metadata to save with the model.
+        signatures (dict, optional): Specify model input-output signatures for serving.
+            Example: {"predict": {"batchable": True}}
+
+    Returns:
+        bentoml.Model: The saved BentoML model reference.
+    """
+    if not signatures:
+        signatures = {"predict": {"batchable": True}}
+    
+    try:
+        saved_model = bentoml.save_model(
+            name=model_name,
+            model=model,
+            metadata=metadata,
+            signatures=signatures 
+        )
+        print(f"Model '{model_name}' has been successfully saved with BentoML.")
+        return saved_model
+    except Exception as e:
+        print(f"Failed to save the model '{model_name}'. Error: {e}")
+        raise

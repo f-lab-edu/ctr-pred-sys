@@ -21,22 +21,22 @@
    cd ctr-pred-sys
 ```
 
-2. 프로젝트 의존성 설치
+2. 프로젝트 의존성 설치:
 ```
 poetry install
 ```
 
-3. 가상환경 활성화
+3. 가상환경 활성화"
 ```
 poetry shell
 ```
 
-4. flake8 실행 (설정 파일은 root directory의 .flake8 파일 참조)
+4. flake8 실행 (설정 파일은 root directory의 .flake8 파일 참조):
 ```
 poetry run flake8
 ```
 
-5. VS Code를 활용한 black 셋팅
+5. VS Code를 활용한 black 셋팅:
  - 설치
     - 좌측 Extension 클릭
     - 'Black'검색
@@ -51,14 +51,26 @@ poetry run flake8
    
    
 
-6. black 코드 포맷팅 적용 (특정 파일에 적용하고 싶은 경우 . 대신 파일명 명시)
+6. black 코드 포맷팅 적용 (특정 파일에 적용하고 싶은 경우 . 대신 파일명 명시):
 ```
 poetry run black .
 ```
 
-7. 포맷팅 확인
+7. 포맷팅 확인:
 ```
 poetry run black --check .
 ```
 
+
+### 실행 방법 방법
+1. main.py 실행:
+```
+python main.py
+```
+
+2. (미완성) BentoML 서비스 실행 스크립트:
+```
+# root 디렉토리에서 실행
+./scripts/run_bentoml.sh
+```
 
