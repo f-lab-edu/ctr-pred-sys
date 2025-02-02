@@ -105,7 +105,7 @@ class LightGBMModel:
         Raises:
             ValueError: If the model has not been trained yet.
         """
-        if not self.model:
+        if not self.lgbm_model:
             raise ValueError("Model has not been trained yet. Call `fit` first.")
         self.lgbm_model.save_model(path)
 

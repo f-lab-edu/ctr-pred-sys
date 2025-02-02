@@ -50,11 +50,7 @@ class ModelService:
         Returns:
             str: The evaluation results of the model.
         """
-        self.model_type = model_type
-        self.conf = load_yaml(self.model_type)
-
-        print(f"[Model Type] {self.model_type}")
-        print("[STEP 0] start")
+        print('[STEP 0] start')
 
         print("[STEP 1] load data")
         data = load_data(self.data_path)
@@ -62,7 +58,7 @@ class ModelService:
         print("[STEP 2] preprocess data")
         X, y, num_cols, cat_cols = preprocess_data(data)
 
-        if self.model_type == "lgbm":
+        if model_type == 'lgbm':
             """
             Run the LightGBM model.
             """
