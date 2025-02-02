@@ -16,7 +16,7 @@ class LightGBMModel:
         Parameters:
             params (dict, optional): Custom LightGBM parameters. If None, default parameters are loaded from a YAML file.
         """
-        self.conf = load_yaml('lgbm')['model']['LGBM']
+        self.conf = load_yaml('lgbm')['model']
         self.params = {
             'objective': self.conf['objective'],
             'metric': self.conf['metric'],
@@ -31,7 +31,7 @@ class LightGBMModel:
             'verbose': self.conf['verbose'],
             'seed': self.conf['seed']
         }
-        self.model = None
+        self.lgbm_model = None
 
     def fit(
         self,
@@ -54,7 +54,7 @@ class LightGBMModel:
         train_data = lgb.Dataset(X_train, label=y_train, categorical_feature=categorical_features)
         test_data = lgb.Dataset(X_test, label=y_test, categorical_feature=categorical_features, reference=train_data)
 
-        self.model = lgb.train(
+        self.lgbm_model = lgb.train(
             self.params,
             train_data,
             valid_sets=[train_data, test_data],
@@ -77,9 +77,9 @@ class LightGBMModel:
         Raises:
             ValueError: If the model has not been trained yet.
         """
-        if not self.model:
+        if not self.lgbm_model:
             raise ValueError("Model has not been trained yet. Call `fit` first.")
-        return self.model.predict(X)
+        return self.lgbm_model.predict(X)
 
     def evaluate(self, X, y):
         """
@@ -107,7 +107,7 @@ class LightGBMModel:
         """
         if not self.model:
             raise ValueError("Model has not been trained yet. Call `fit` first.")
-        self.model.save_model(path)
+        self.lgbm_model.save_model(path)
 
     def load_model(self, path):
         """
@@ -116,4 +116,4 @@ class LightGBMModel:
         Parameters:
             path (str): Path to the saved model file.
         """
-        self.model = lgb.Booster(model_file=path)
+        self.lgbm_model = lgb.Booster(model_file=path)

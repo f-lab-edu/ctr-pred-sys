@@ -1,6 +1,7 @@
 # ctr-pred-sys
 광고 회사인 Criteo 데이터셋으로 CTR Prediction을 진행하는 시스템을 구축
 3가지의 다른 방식의 모델을 사용하여 CTR Prediction 진행
+BentoML을 활용한 모델 패키징 및 서빙 진행
 코드 품질과 스타일의 일관성 유지를 위해 **flake8**(코드 린팅)과 **black**(코드 포맷팅) 사용
 
 ### 프로젝트 구조
@@ -11,8 +12,9 @@
 
 아래 항목들이 설치되어 있는지 확인하세요:
 
-- **Python**: 3.8 이상
+- **Python**: 3.9 이상
 - **Poetry**: 최신 버전 ([설치 가이드](https://python-poetry.org/docs/))
+- **Python**: 최신 버전 ([설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/))
 
 ### 셋팅 방법
 1. 레포지토리 클론:
@@ -62,15 +64,39 @@ poetry run black --check .
 ```
 
 
-### 실행 방법 방법
-1. main.py 실행:
+### 실행 방법
+#### Bento (BentoML 패키지) 빌드
+1. 빌드 진행:
 ```
-python main.py
+bentoml build
 ```
 
-2. (미완성) BentoML 서비스 실행 스크립트:
+2. Bento 실행:
 ```
 # root 디렉토리에서 실행
-./scripts/run_bentoml.sh
+bentoml serve model_service:[TAG_NAME]
 ```
 
+3. 모델 학습 및 저장:
+```
+# model_type은 "lgbm", "deepfm", "dcn_v2" 중 하나
+curl -X POST -H "Content-Type: application/json" -d '{"model_type": [model_type]}' http://localhost:3000/run_model
+```
+
+#### Bento 배포
+1. Docker image 생성:
+```
+# docker 사전에 설치되어 있어야 함
+bentoml containerize model_service:latest
+```
+
+2. 컨테이너 실행:
+```
+docker run --rm -p 3000:3000 model_service:[TAG_NAME]
+```
+
+3. 모델 학습 및 저장:
+```
+# model_type은 "lgbm", "deepfm", "dcn_v2" 중 하나
+curl -X POST -H "Content-Type: application/json" -d '{"model_type": [model_type]}' http://localhost:3000/run_model
+```

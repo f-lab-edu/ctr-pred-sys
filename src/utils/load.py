@@ -33,5 +33,9 @@ def load_data(path: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: A DataFrame containing the contents of the csv file.
     """
+    cur_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.abspath(os.path.join(cur_dir, "../../"))
+    path = os.path.join(root_dir, path)
+
     data = pd.read_csv(path, sep="\t", header=None)
     return data
