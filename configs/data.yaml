@@ -1,3 +1,4 @@
 data:
   dataset_path: "./data/day_0_sample_10000"
   test_split: 0.2
+  num_workers: 4

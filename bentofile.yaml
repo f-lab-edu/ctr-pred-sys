@@ -1,0 +1,18 @@
+service: "src.serving.service:ModelService"
+description: "The ctr prediction model serving pipeline using bentoml."
+include:
+  - "configs/*"
+  - "src/**/*.py"
+  - "data/**/*"
+python:
+  packages:
+    - bentoml
+    - pyyaml
+    - numpy
+    - pandas
+    - torch
+    - scikit-learn
+    - lightgbm
+envs:
+  - name: PYTHONPATH
+    value: .
