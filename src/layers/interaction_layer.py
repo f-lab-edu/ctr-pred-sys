@@ -3,7 +3,6 @@ import torch.nn as nn
 
 from typing import Tuple
 from torch import Tensor
-from typing import Tuple
 
 
 class FMInteractionLayer(nn.Module):
