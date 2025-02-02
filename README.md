@@ -14,7 +14,7 @@ BentoML을 활용한 모델 패키징 및 서빙 진행
 
 - **Python**: 3.9 이상
 - **Poetry**: 최신 버전 ([설치 가이드](https://python-poetry.org/docs/))
-- **Python**: 최신 버전 ([설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/))
+- **Docker**: 최신 버전 ([설치 가이드](https://docs.docker.com/desktop/setup/install/mac-install/))
 
 ### 셋팅 방법
 1. 레포지토리 클론:
