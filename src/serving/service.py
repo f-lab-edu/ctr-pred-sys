@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import bentoml
 import torch
+import logging
 
 from torch.utils.data import DataLoader
 
@@ -14,6 +15,14 @@ with bentoml.importing():
     from src.models.deepfm import DeepFM
     from src.models.dcn_v2 import DCNv2
     from src.models.lgbm import LightGBMModel
+
+
+# Set logging format
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 # Define a BentoML service with specified resource limits and traffic settings
@@ -55,20 +64,20 @@ class ModelService:
         self.model_type = model_type
         self.conf = load_yaml(self.model_type)
         
-        print(f"[Model Type] {self.model_type}")
-        print("[STEP 0] start")
+        logger.info(f"[Model Type] {self.model_type}")
+        logger.info("[STEP 0] start")
 
-        print("[STEP 1] load data")
+        logger.info("[STEP 1] load data")
         data = load_data(self.data_path)
 
-        print("[STEP 2] preprocess data")
+        logger.info("[STEP 2] preprocess data")
         X, y, num_cols, cat_cols = preprocess_data(data)
 
         if self.model_type == "lgbm":
             """
             Run the LightGBM model.
             """
-            print("[STEP 3] Running LightGBM model")
+            logger.info("[STEP 3] Running LightGBM model")
             x_train, x_test, y_train, y_test = split_data(
                 X, y, num_cols, cat_cols, split_num_cat=False
             )
@@ -83,7 +92,7 @@ class ModelService:
             """
             Run the DeepFM model.
             """
-            print("[STEP 3] Running DeepFM model")
+            logger.info("[STEP 3] Running DeepFM model")
             X_train_num, X_test_num, X_train_cat, X_test_cat, y_train, y_test = (
                 split_data(X, y, num_cols, cat_cols, split_num_cat=True)
             )
@@ -129,7 +138,7 @@ class ModelService:
             """
             Run the DCNv2 model.
             """
-            print("[STEP 3] Running DCNv2 model")
+            logger.info("[STEP 3] Running DCNv2 model")
             x_train_num, x_test_num, x_train_cat, x_test_cat, y_train, y_test = (
                 split_data(X, y, num_cols, cat_cols, split_num_cat=True)
             )
