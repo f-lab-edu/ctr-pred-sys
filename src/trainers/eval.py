@@ -1,10 +1,14 @@
 import torch
+import logging
+
 import numpy as np
 import pandas as pd
 
 from src.models.lgbm import LightGBMModel
 from sklearn.metrics import log_loss, accuracy_score
 from typing import Tuple, Union
+
+logger = logging.getLogger(__name__)
 
 def compute_log_loss(y_true: Union[np.ndarray, pd.Series], y_pred: Union[np.ndarray, pd.Series]) -> float:
     """
@@ -64,7 +68,7 @@ def evaluate_dl_model(model: torch.nn.Module, dataloader: torch.utils.data.DataL
     log_loss = compute_log_loss(np.array(labels), np.array(preds))
     accuracy = compute_accuracy(np.array(labels), np.array(preds))
 
-    print(f"Log Loss: {log_loss:.4f}, Accuracy: {accuracy:.4f}")
+    logger.info(f"Log Loss: {log_loss:.4f}, Accuracy: {accuracy:.4f}")
     return log_loss, accuracy
 
 
@@ -85,5 +89,5 @@ def evaluate_lgbm_model(model: LightGBMModel, data: pd.DataFrame, labels: pd.Ser
     log_loss = compute_log_loss(labels, preds)
     accuracy = compute_accuracy(labels, preds)
 
-    print(f"Log Loss: {log_loss:.4f}, Accuracy: {accuracy:.4f}")
+    logger.info(f"Log Loss: {log_loss:.4f}, Accuracy: {accuracy:.4f}")
     return log_loss, accuracy
