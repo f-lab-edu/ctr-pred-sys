@@ -1,12 +1,14 @@
 import torch
+import logging
+
 import torch.nn as nn
 import torch.optim as optim
 import pandas as pd
 
 from src.models.lgbm import LightGBMModel
 from torch.utils.data import DataLoader
-from typing import Dict, Optional, Any
 
+logger = logging.getLogger(__name__)
 
 def train_dl_model(
     model: nn.Module,
@@ -62,7 +64,7 @@ def train_dl_model(
                 loss = criterion(outputs, labels)
                 test_loss += loss.item()
 
-        print(
+        logger.info(
             f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss / len(train_loader):.4f}, Test Loss: {test_loss / len(test_loader):.4f}"
         )
 
@@ -86,4 +88,4 @@ def train_lgbm_model(
     """
     model.fit(X_train, y_train, X_val, y_val)
     auc_score = model.evaluate(X_val, y_val)
-    print(f"LightGBM Validation AUC: {auc_score:.4f}")
+    logger.info(f"LightGBM Validation AUC: {auc_score:.4f}")
